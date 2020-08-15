@@ -1,0 +1,2179 @@
+openapi: 3.0.1
+info:
+  description: The bol.com API for Retailers.
+  title: v4
+  version: "4.0"
+servers:
+- url: https://api.bol.com/
+tags:
+- name: Content
+- name: Insights
+- name: Offers
+- name: Orders
+- name: Pricing
+- name: Process Status
+- name: Returns
+- name: Shipping Labels
+- name: Subscriptions
+- name: Transports
+paths:
+  /retailer/content/product:
+    post:
+      description: Create content for existing products or new products.
+      operationId: post-product-content
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/CreateProductContentRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/CreateProductContentRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Post product content
+      tags:
+      - Content
+      x-codegen-request-body-name: body
+  /retailer/content/validation-report/{uploadId}:
+    get:
+      description: Retrieve a validation report of the product content upload based
+        on the upload id.
+      operationId: get-validation-report
+      parameters:
+      - description: The identifier of the product content upload.
+        in: path
+        name: uploadId
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ValidationReportResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ValidationReportResponse'
+          description: 'Ok: Successfully processed the request.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get validation report
+      tags:
+      - Content
+  /retailer/insights/offer:
+    get:
+      description: Gets offer insights.
+      operationId: get-offer-insights
+      parameters:
+      - description: Unique identifier for an offer.
+        in: query
+        name: offer-id
+        required: true
+        schema:
+          type: string
+      - description: The time unit in which the offer insights are grouped.
+        in: query
+        name: period
+        required: true
+        schema:
+          enum:
+          - DAY
+          - WEEK
+          - MONTH
+          type: string
+      - description: The number of periods for which the offer insights are requested
+          back in time.
+        in: query
+        name: number-of-periods
+        required: true
+        schema:
+          format: int32
+          type: integer
+      - description: The name of the requested offer insight.
+        explode: true
+        in: query
+        name: name
+        required: true
+        schema:
+          items:
+            enum:
+            - PRODUCT_VISITS
+            - BUY_BOX_PERCENTAGE
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/OfferInsights'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/OfferInsights'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Get offer insights
+      tags:
+      - Insights
+  /retailer/insights/sales-forecast:
+    get:
+      description: Gets sales forecast.
+      operationId: get-sales-forecast
+      parameters:
+      - description: Unique identifier for an offer.
+        in: query
+        name: offer-id
+        required: true
+        schema:
+          type: string
+      - description: The number of weeks into the future, starting from today.
+        in: query
+        name: weeks-ahead
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/SalesForecastResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/SalesForecastResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Get sales forecast
+      tags:
+      - Insights
+  /retailer/offers/unpublished:
+    post:
+      description: Request an unpublished offer report containing all unpublished
+        offers and reasons.
+      operationId: post-unpublished-offer-report
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/CreateUnpublishedOfferReportRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/CreateUnpublishedOfferReportRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Request an unpublished offer report
+      tags:
+      - Offers
+      x-codegen-request-body-name: body
+  /retailer/offers/unpublished/{report-id}:
+    get:
+      description: Retrieve an unpublished offer report containing all unpublished
+        offers and reasons.
+      operationId: get-unpublished-offer-report
+      parameters:
+      - description: Unique identifier for unpublished offer report.
+        in: path
+        name: report-id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+csv:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+        "404":
+          content:
+            application/vnd.retailer.v4+csv:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Retrieve an unpublished offer report by report id
+      tags:
+      - Offers
+  /retailer/orders/cancellation:
+    put:
+      description: This endpoint can be used to either confirm a cancellation request
+        by the customer or to cancel an order item you yourself are unable to fulfil.
+      operationId: cancel-order-item
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/Container for the order items that have
+                to be cancelled.'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/Container for the order items that have
+                to be cancelled.'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Cancel an order item by an order item id
+      tags:
+      - Orders
+      x-codegen-request-body-name: body
+  /retailer/orders/shipment:
+    put:
+      description: Ship a single order item within a customer order by providing shipping
+        information. In case you purchased a shipping label you can add the shippingLabelId
+        to this message; in that case the transport element must be left empty. If
+        you ship the item(s) using your own transporter method you must omit the shippingLabelId
+        entirely.
+      operationId: ship-order-item
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/ShipmentRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/ShipmentRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Ship order item
+      tags:
+      - Orders
+      x-codegen-request-body-name: body
+  /retailer/pricing/retail-prices/{ean}:
+    get:
+      description: |-
+        Currently this endpoint only supports the allowable retail price and can support the following use cases:<br /><br />
+                            1) EANs that have been unpublished due to price related reasons can be checked against this endpoint.<br />
+                            2) Requesting the allowable retail price for EANs that are not yet in your assortment can help inform price setting.
+      operationId: get-retail-price
+      parameters:
+      - description: The EAN number associated with this product.
+        example: "0000007740404"
+        in: path
+        name: ean
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/RetailPriceResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/RetailPriceResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Retrieve retail price information for an EAN.
+      tags:
+      - Pricing
+  /retailer/process-status:
+    get:
+      description: 'Retrieve a list of process statuses, which shows information regarding
+        previously executed PUT/POST/DELETE requests in descending order. You need
+        to supply an entity id and event type. Please note: process status instances
+        are only retained for a limited period of time after completion. Outside of
+        this period, deleted process statuses will no longer be returned. Please handle
+        this accordingly, by stopping any active polling for these statuses.'
+      operationId: get-process-status-entity-id
+      parameters:
+      - description: The entity id is not unique so you need to provide an event type.
+          The entity id can either be order item id, transport id, return number or
+          inbound reference.
+        example: "987654321"
+        in: query
+        name: entity-id
+        required: true
+        schema:
+          type: string
+      - description: The event type can only be used in combination with the entity
+          id.
+        example: PROCESS_EXAMPLE
+        in: query
+        name: event-type
+        required: true
+        schema:
+          enum:
+          - CONFIRM_SHIPMENT
+          - CANCEL_ORDER
+          - CHANGE_TRANSPORT
+          - HANDLE_RETURN_ITEM
+          - CREATE_RETURN_ITEM
+          - CREATE_INBOUND
+          - DELETE_OFFER
+          - CREATE_OFFER
+          - UPDATE_OFFER
+          - UPDATE_OFFER_STOCK
+          - UPDATE_OFFER_PRICE
+          - CREATE_OFFER_EXPORT
+          - UNPUBLISHED_OFFER_REPORT
+          - CREATE_PRODUCT_CONTENT
+          type: string
+      - description: The requested page number with a pagesize of 50
+        in: query
+        name: page
+        schema:
+          default: 1
+          format: int32
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatusResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatusResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Gets the status of an asynchronous process by entity id and event type
+        for a retailer
+      tags:
+      - Process Status
+    post:
+      description: 'Retrieve a list of process statuses, which shows information regarding
+        previously executed PUT/POST/DELETE requests. No more than 1000 process status
+        id''s can be sent in a single request.Please note: process status instances
+        are only retained for a limited period of time after completion. Outside of
+        this period, deleted process statuses will no longer be returned. Please handle
+        this accordingly, by stopping any active polling for these statuses.'
+      operationId: get-process-status-bulk
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/BulkProcessStatusRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/BulkProcessStatusRequest'
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatusResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatusResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Gets the status of multiple asynchronous processes by an array of process
+        status id's for a retailer
+      tags:
+      - Process Status
+      x-codegen-request-body-name: body
+  /retailer/process-status/{process-status-id}:
+    get:
+      description: 'Retrieve a specific process-status, which shows information regarding
+        a previously executed PUT/POST/DELETE request. All PUT/POST/DELETE requests
+        on the other endpoints will supply a process-status-id in the related response.
+        You can use this id to retrieve a status by using the endpoint below. Please
+        note: process status instances are only retained for a limited period of time
+        after completion. Outside of this period, a 404 will be returned for missing
+        process statuses. Please handle this accordingly, by stopping any active polling
+        for these statuses.'
+      operationId: get-process-status
+      parameters:
+      - description: The id of the process status being requested. This id is supplied
+          in every response to a PUT/POST/DELETE request on the other endpoints.
+        in: path
+        name: process-status-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Ok: Successfully processed the request.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get the status of an asynchronous process by id
+      tags:
+      - Process Status
+  /retailer/returns:
+    get:
+      description: Get a paginated list of multi-item returns, which are sorted by
+        date in descending order.
+      operationId: get-returns
+      parameters:
+      - description: The page to get with a page size of 50.
+        in: query
+        name: page
+        schema:
+          default: 1
+          format: int32
+          minimum: 1
+          type: integer
+      - description: The status of the returns you wish to see, shows either handled
+          or unhandled returns.
+        in: query
+        name: handled
+        schema:
+          type: boolean
+      - description: The fulfilment method. Fulfilled by the retailer (FBR) or fulfilled
+          by bol.com (FBB).
+        in: query
+        name: fulfilment-method
+        schema:
+          default: FBR
+          enum:
+          - FBR
+          - FBB
+          type: string
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ReturnsResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ReturnsResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Get returns
+      tags:
+      - Returns
+    post:
+      description: Create a return, and automatically handle it with the provided
+        handling result. When successfully created, the resulting return id is provided
+        in the process status.
+      operationId: create-return
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CreateReturnRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Create return
+      tags:
+      - Returns
+      x-codegen-request-body-name: body
+  /retailer/returns/{return-id}:
+    get:
+      description: Retrieve a return based on the return id.
+      operationId: get-return
+      parameters:
+      - description: The return id that identifies this return.
+        in: path
+        name: return-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Return'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Return'
+          description: 'Ok: Successfully processed the request.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get a return by return id
+      tags:
+      - Returns
+  /retailer/returns/{rma-id}:
+    put:
+      description: Allows the user to handle a return. This can be to either handle
+        an open return, or change the handlingResult of an already handled return.
+        The latter is only possible in limited scenarios, please check the returns
+        documentation for a complete list.
+      operationId: handle-return
+      parameters:
+      - description: The RMA (Return Merchandise Authorization) id that identifies
+          this particular return.
+        in: path
+        name: rma-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/ReturnRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/ReturnRequest'
+        description: The handling result requested by the retailer.
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Handle a return
+      tags:
+      - Returns
+      x-codegen-request-body-name: body
+  /retailer/shipping-labels:
+    post:
+      description: Create a shipping label with a shipping label offer id retrieved
+        from get delivery options.
+      operationId: post-shipping-label
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/ShippingLabelRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/ShippingLabelRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Create a shipping label
+      tags:
+      - Shipping Labels
+      x-codegen-request-body-name: body
+  /retailer/shipping-labels/delivery-options:
+    post:
+      description: Retrieves all available delivery options based on the supplied
+        configuration of order items that has to be shipped.
+      operationId: get-delivery-options
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/DeliveryOptionsRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/DeliveryOptionsRequest'
+        required: false
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/DeliveryOptionsResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/DeliveryOptionsResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get delivery options for a shippable configuration of a number of order
+        items within an order.
+      tags:
+      - Shipping Labels
+      x-codegen-request-body-name: body
+  /retailer/shipping-labels/{shipping-label-id}:
+    get:
+      description: Gets a shipping label by shipping label id.
+      operationId: get-shipping-label
+      parameters:
+      - description: The shipping label id.
+        example: 6ff736b5-cdd0-4150-8c67-78269ee986f5
+        in: path
+        name: shipping-label-id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+pdf:
+              schema:
+                items:
+                  format: byte
+                  pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+                  type: string
+                type: array
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+pdf:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+        "404":
+          content:
+            application/vnd.retailer.v4+pdf:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get a shipping label
+      tags:
+      - Shipping Labels
+  /retailer/subscriptions:
+    get:
+      description: Retrieve a list of all configured and active push notification
+        subscriptions.
+      operationId: get-push-notification-subscriptions
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionsResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionsResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Get push notification subscriptions
+      tags:
+      - Subscriptions
+    post:
+      description: Create a push notification subscription for one (or more) of the
+        available resources. The configured URL has to support https scheme.
+      operationId: post-push-notification-subscription
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Create push notification subscription
+      tags:
+      - Subscriptions
+      x-codegen-request-body-name: body
+  /retailer/subscriptions/test:
+    post:
+      description: Send a test push notification to all subscriptions for the provided
+        event.
+      operationId: post-test-push-notification
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Send test push notification for subscriptions
+      tags:
+      - Subscriptions
+  /retailer/subscriptions/{subscription-id}:
+    delete:
+      description: Delete a push notification subscription with the provided id.
+      operationId: delete-push-notification-subscription
+      parameters:
+      - description: A unique identifier for the subscription
+        example: 1234
+        in: path
+        name: subscription-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Delete push notification subscription
+      tags:
+      - Subscriptions
+    get:
+      description: Retrieve a configured and active push notification subscription
+        with the provided id.
+      operationId: get-push-notification-subscription
+      parameters:
+      - description: A unique identifier for the subscription
+        example: 1234
+        in: path
+        name: subscription-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+          description: 'Ok: Successfully processed the request.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+        "404":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Not found: The requested item could not be found.'
+      summary: Get push notification subscription by id
+      tags:
+      - Subscriptions
+    put:
+      description: Update an existing push notification subscription with the supplied
+        id. The configured URL has to support https scheme.
+      operationId: put-push-notification-subscription
+      parameters:
+      - description: A unique identifier for the subscription
+        example: 1234
+        in: path
+        name: subscription-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/UpdateSubscriptionRequest'
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Update push notification subscription
+      tags:
+      - Subscriptions
+      x-codegen-request-body-name: body
+  /retailer/transports/{transport-id}:
+    put:
+      description: Add information to an existing transport. The transport id is part
+        of the shipment. You can retrieve the transport id through the GET shipment
+        list request.
+      operationId: add-transport-information-by-transport-id
+      parameters:
+      - description: The transport id.
+        in: path
+        name: transport-id
+        required: true
+        schema:
+          format: int64
+          type: integer
+      requestBody:
+        content:
+          application/vnd.retailer.v4+json:
+            schema:
+              $ref: '#/components/schemas/ChangeTransportRequest'
+          application/vnd.retailer.v4+xml:
+            schema:
+              $ref: '#/components/schemas/ChangeTransportRequest'
+        description: The change transport requested by the user.
+        required: false
+      responses:
+        "202":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/ProcessStatus'
+          description: 'Accepted: Successfully scheduled the request for processing.'
+        "400":
+          content:
+            application/vnd.retailer.v4+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+            application/vnd.retailer.v4+xml:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'Bad request: The sent request does not meet the API specification.
+            Please check the error message(s) for more information.'
+      summary: Add transport information by transport id
+      tags:
+      - Transports
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Attribute:
+      properties:
+        id:
+          description: Identifier of the attribute from the data model.
+          example: Width
+          maxLength: 100
+          minLength: 1
+          type: string
+        values:
+          description: A list of attribute values.
+          items:
+            $ref: '#/components/schemas/AttributeValue'
+          type: array
+      required:
+      - id
+      - values
+      type: object
+    AttributeValue:
+      properties:
+        value:
+          description: The value(s) of the attribute.
+          example: "14.5"
+          maxLength: 10000
+          minLength: 1
+          type: string
+        unitId:
+          description: The unit identifier of the attribute.
+          example: mm
+          type: string
+      required:
+      - value
+      type: object
+    BulkProcessStatusRequest:
+      properties:
+        processStatusQueries:
+          items:
+            $ref: '#/components/schemas/ProcessStatusId'
+          maxItems: 1000
+          minItems: 1
+          type: array
+      required:
+      - processStatusQueries
+      type: object
+    ChangeTransportRequest:
+      properties:
+        transporterCode:
+          enum:
+          - BRIEFPOST
+          - UPS
+          - TNT
+          - TNT-EXTRA
+          - TNT_BRIEF
+          - TNT-EXPRESS
+          - DYL
+          - DPD-NL
+          - DPD-BE
+          - BPOST_BE
+          - BPOST_BRIEF
+          - DHLFORYOU
+          - GLS
+          - FEDEX_NL
+          - FEDEX_BE
+          - OTHER
+          - DHL
+          - DHL_DE
+          - DHL-GLOBAL-MAIL
+          - TSN
+          - FIEGE
+          - TRANSMISSION
+          - PARCEL-NL
+          - LOGOIX
+          - PACKS
+          - COURIER
+          - RJP
+          example: TNT
+          type: string
+        trackAndTrace:
+          description: The track and trace code that is associated with this transport.
+          example: 3SBOL0987654321
+          type: string
+      type: object
+    Container for the order items that have to be cancelled.:
+      properties:
+        orderItems:
+          description: List of order items to cancel. Order item id's must belong
+            to the same order.
+          items:
+            $ref: '#/components/schemas/OrderItemCancellation'
+          maxItems: 1
+          minItems: 1
+          type: array
+      required:
+      - orderItems
+      type: object
+    Country:
+      properties:
+        countryCode:
+          description: The country code.
+          example: NL
+          type: string
+        value:
+          description: The total value of offer insight.
+          example: 100.0
+          format: double
+          type: number
+      type: object
+    CountryTotalResponse:
+      properties:
+        countryCode:
+          description: The country code.
+          example: NL
+          type: string
+        minimum:
+          description: Minimum number of estimated sales expectations on the bol.com
+            platform.
+          example: 10.5
+          format: double
+          type: number
+        maximum:
+          description: Maximum number of estimated sales expectations on the bol.com
+            platform.
+          example: 20.5
+          format: double
+          type: number
+      type: object
+    CreateProductContentRequest:
+      properties:
+        language:
+          description: The language to indicate the language of the supplied content.
+          enum:
+          - nl
+          - nl-BE
+          - fr
+          - fr-BE
+          example: nl
+          type: string
+        productContents:
+          description: A list of supplied products and their attributes. Attributes
+            that are required for publishing products online will be mentioned in
+            the data model.
+          items:
+            $ref: '#/components/schemas/ProductContent'
+          maxItems: 100
+          minItems: 1
+          type: array
+      required:
+      - language
+      - productContents
+      type: object
+    CreateReturnRequest:
+      example:
+        quantityReturned: 1
+        orderItemId: "2012345678"
+        handlingResult: RETURN_RECEIVED
+      properties:
+        orderItemId:
+          description: The id for the order item (1 order can have multiple order
+            items).
+          example: "2012345678"
+          type: string
+        quantityReturned:
+          description: The quantity of items returned.
+          example: 1
+          format: int32
+          maximum: 9999
+          minimum: 1
+          type: integer
+        handlingResult:
+          description: The handling result requested by the user.
+          enum:
+          - RETURN_RECEIVED
+          - EXCHANGE_PRODUCT
+          - RETURN_DOES_NOT_MEET_CONDITIONS
+          - REPAIR_PRODUCT
+          - CUSTOMER_KEEPS_PRODUCT_PAID
+          example: RETURN_RECEIVED
+          type: string
+      required:
+      - handlingResult
+      - orderItemId
+      - quantityReturned
+      type: object
+    CreateSubscriptionRequest:
+      properties:
+        resources:
+          description: Type of event
+          example: '[''PROCESS_STATUS'']'
+          items:
+            enum:
+            - PROCESS_STATUS
+            type: string
+          type: array
+        url:
+          description: URL to receive this WebHook notification
+          example: https://www.bol.com/webhook
+          pattern: ^https.*
+          type: string
+      required:
+      - resources
+      - url
+      type: object
+    CreateUnpublishedOfferReportRequest:
+      properties:
+        format:
+          description: The file format in which to return the export.
+          enum:
+          - CSV
+          example: CSV
+          type: string
+      required:
+      - format
+      type: object
+    CustomerDetails:
+      properties:
+        salutationCode:
+          description: The salutation code.
+          example: "02"
+          type: string
+        firstName:
+          description: The first name.
+          example: Billie
+          type: string
+        surname:
+          description: The surname.
+          example: Jansen
+          type: string
+        streetName:
+          description: The street name.
+          example: Dorpstraat
+          type: string
+        houseNumber:
+          description: The house number.
+          example: "1"
+          type: string
+        houseNumberExtended:
+          description: The extension on the house number.
+          example: B
+          type: string
+        addressSupplement:
+          description: The address supplement.
+          example: Afdeling kwaliteit
+          type: string
+        extraAddressInformation:
+          description: Extra information about the address.
+          example: Apartment
+          type: string
+        zipCode:
+          description: The ZIP code.
+          example: 1111 ZZ
+          type: string
+        city:
+          description: The name of the city.
+          example: Utrecht
+          type: string
+        countryCode:
+          description: The country code.
+          example: NL
+          type: string
+        email:
+          description: The e-mail address.
+          example: billie@verkopen.bol.com
+          type: string
+        deliveryPhoneNumber:
+          description: The delivery phone number.
+          example: "012123456"
+          type: string
+        company:
+          description: The company name.
+          example: bol.com
+          type: string
+        vatNumber:
+          description: The VAT number.
+          example: NL999999999B99
+          type: string
+      type: object
+    DeliveryOption:
+      description: A delivery option shows how and the costs of a transport for a
+        shippable configuration
+      properties:
+        shippingLabelOfferId:
+          description: Unique identifier for the shipping label offer.
+          example: 027b79fa-5743-40f0-94c7-0eac761af611
+          type: string
+        transporterCode:
+          description: A code representing the transporter which is being used for
+            transportation.
+          example: TNT_BRIEF
+          type: string
+        labelType:
+          description: The type of the label, representing the way an item is being
+            transported.
+          enum:
+          - PARCEL
+          - MAILBOX
+          - MAILBOX_LIGHT
+          example: MAILBOX_LIGHT
+          type: string
+        labelPrice:
+          $ref: '#/components/schemas/LabelPrice'
+        packageRestrictions:
+          $ref: '#/components/schemas/PackageRestrictions'
+      required:
+      - labelPrice
+      - packageRestrictions
+      type: object
+    DeliveryOptionsRequest:
+      description: The configuration of order items to get delivery options for.
+      properties:
+        orderItems:
+          description: Order items for which the delivery options are requested.
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          type: array
+      required:
+      - orderItems
+      type: object
+    DeliveryOptionsResponse:
+      description: The possible delivery options based on a shippable configuration
+      properties:
+        deliveryOptions:
+          items:
+            $ref: '#/components/schemas/DeliveryOption'
+          type: array
+      required:
+      - deliveryOptions
+      type: object
+    LabelPrice:
+      properties:
+        totalPrice:
+          description: The price that is charged for this delivery option, excluding
+            VAT.
+          example: 2.88
+          type: number
+      type: object
+    Link:
+      properties:
+        rel:
+          example: self
+          type: string
+        href:
+          example: https://api.bol.com/retailer/process-status/1234567
+          type: string
+        method:
+          description: HTTP method
+          example: GET
+          type: string
+      type: object
+    OfferInsight:
+      properties:
+        name:
+          description: The name of the requested offer insight.
+          example: BUY_BOX_PERCENTAGE
+          type: string
+        type:
+          description: Interpretation of the data that applies to this measurement.
+          example: percentage
+          type: string
+        total:
+          description: Total number of customer visits on the product page when the
+            offer had the buy box over the requested period (excluding the current
+            day).
+          example: 50.0
+          format: double
+          type: number
+        countries:
+          items:
+            $ref: '#/components/schemas/Country'
+          type: array
+        periods:
+          items:
+            $ref: '#/components/schemas/Periods'
+          type: array
+      required:
+      - countries
+      - periods
+      type: object
+    OfferInsights:
+      description: Offer insights.
+      properties:
+        offerInsights:
+          items:
+            $ref: '#/components/schemas/OfferInsight'
+          type: array
+      required:
+      - offerInsights
+      type: object
+    OrderItem:
+      properties:
+        orderItemId:
+          description: The id for the order item (1 order can have multiple order
+            items).
+          example: "2012345678"
+          type: string
+      required:
+      - orderItemId
+      type: object
+    OrderItemCancellation:
+      properties:
+        orderItemId:
+          description: The id for the order item (1 order can have multiple order
+            items).
+          example: "2012345678"
+          type: string
+        reasonCode:
+          description: The code representing the reason for cancellation of this item.
+          enum:
+          - OUT_OF_STOCK
+          - REQUESTED_BY_CUSTOMER
+          - BAD_CONDITION
+          - HIGHER_SHIPCOST
+          - INCORRECT_PRICE
+          - NOT_AVAIL_IN_TIME
+          - NO_BOL_GUARANTEE
+          - ORDERED_TWICE
+          - RETAIN_ITEM
+          - TECH_ISSUE
+          - UNFINDABLE_ITEM
+          - OTHER
+          example: BAD_CONDITION
+          type: string
+      required:
+      - orderItemId
+      - reasonCode
+      type: object
+    PackageRestrictions:
+      properties:
+        maxWeight:
+          description: The weight of a package.
+          example: 10 kg
+          type: string
+        maxDimensions:
+          description: The dimensions of a package.
+          example: 10 x 10 x 10 cm
+          type: string
+      type: object
+    Period:
+      properties:
+        day:
+          description: Day of the month.
+          example: 1
+          format: int32
+          type: integer
+        week:
+          description: Week of the year.
+          example: 49
+          format: int32
+          type: integer
+        month:
+          description: Month of the year.
+          example: 12
+          format: int32
+          type: integer
+        year:
+          description: Year
+          example: 2019
+          format: int32
+          type: integer
+      type: object
+    PeriodResponse:
+      properties:
+        weeksAhead:
+          description: The number of weeks into the future, starting from today.
+          example: 2
+          format: int32
+          type: integer
+        total:
+          $ref: '#/components/schemas/TotalResponse'
+        countries:
+          items:
+            $ref: '#/components/schemas/CountryTotalResponse'
+          type: array
+      required:
+      - countries
+      - total
+      type: object
+    Periods:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        total:
+          description: Total number of customer visits on the product page when the
+            offer had the buy box over the requested period (excluding the current
+            day).
+          example: 50.0
+          format: double
+          type: number
+        countries:
+          items:
+            $ref: '#/components/schemas/Country'
+          type: array
+      required:
+      - period
+      type: object
+    Problem:
+      description: Describes a problem that occurred interacting with the API.
+      properties:
+        type:
+          description: 'Type URI for this problem. Fixed value: https://api.bol.com/problems.'
+          example: https://api.bol.com/problems
+          format: uri
+          type: string
+        title:
+          description: Title describing the nature of the problem.
+          example: Error validating request body. Consult the bol.com API documentation
+            for more information.
+          type: string
+        status:
+          description: HTTP status returned from the endpoint causing the problem.
+          format: int32
+          type: integer
+        detail:
+          description: Detailed error message describing in additional detail what
+            caused the service to return this problem.
+          example: Bad request
+          type: string
+        host:
+          description: Host identifier describing the server instance that reported
+            the problem.
+          example: Instance-001
+          type: string
+        instance:
+          description: Full URI path of the resource that reported the problem.
+          example: https://api.bol.com//retailer/resource
+          format: uri
+          type: string
+        violations:
+          items:
+            $ref: '#/components/schemas/Violation'
+          type: array
+      type: object
+    ProcessStatus:
+      properties:
+        id:
+          description: The process status id.
+          example: 1234567
+          format: int64
+          type: integer
+        entityId:
+          description: The id of the object being processed. E.g. in case of a shipment
+            process id, you will receive the id of the order item being processed.
+          example: "987654321"
+          type: string
+        eventType:
+          description: Name of the requested action that is being processed.
+          example: PROCESS_EXAMPLE
+          type: string
+        description:
+          description: Describes the action that is being processed.
+          example: Example request for processing 987654321.
+          type: string
+        status:
+          description: Status of the action being processed.
+          enum:
+          - PENDING
+          - SUCCESS
+          - FAILURE
+          - TIMEOUT
+          example: SUCCESS
+          type: string
+        errorMessage:
+          description: Shows error message if applicable.
+          example: The example has been processed.
+          type: string
+        createTimestamp:
+          description: Time of creation of the response.
+          example: 2018-11-14T09:34:41+01:00
+          format: date-time
+          type: string
+        links:
+          description: Lists available actions applicable to this endpoint.
+          items:
+            $ref: '#/components/schemas/Link'
+          type: array
+      type: object
+    ProcessStatusId:
+      properties:
+        id:
+          description: The process status id.
+          example: 1234567
+          format: int64
+          type: integer
+      type: object
+    ProcessStatusResponse:
+      properties:
+        processStatuses:
+          items:
+            $ref: '#/components/schemas/ProcessStatus'
+          type: array
+      required:
+      - processStatuses
+      type: object
+    ProductContent:
+      properties:
+        internalReference:
+          description: A user defined unique reference to identify the products in
+            the upload.
+          example: USER-REFERENCE
+          maxLength: 30
+          minLength: 1
+          type: string
+        attributes:
+          description: A list of attributes.
+          items:
+            $ref: '#/components/schemas/Attribute'
+          maxItems: 100
+          minItems: 1
+          type: array
+      required:
+      - attributes
+      - internalReference
+      type: object
+    ProductContentResponse:
+      description: An rejected product content.
+      properties:
+        internalReference:
+          description: A user defined unique reference to identify the products in
+            the upload.
+          example: USER-REFERENCE
+          type: string
+        rejectedAttributes:
+          items:
+            $ref: '#/components/schemas/RejectedAttributeResponse'
+          type: array
+        status:
+          description: The end status of the rejected attribute.
+          enum:
+          - VALIDATED_OK
+          - VALIDATED_WITH_ATTRIBUTE_FAILURES
+          - REJECTED
+          - REJECTED_WITH_ATTRIBUTE_FAILURES
+          example: VALIDATED_WITH_ATTRIBUTE_FAILURES
+          type: string
+        errorCode:
+          description: The rejection error code.
+          example: 1000
+          format: int32
+          type: integer
+        errorDescription:
+          description: The rejection error message explains why the value was rejected.
+          example: Example rejection message.
+          type: string
+      type: object
+    ReducedReturn:
+      properties:
+        returnId:
+          description: Unique identifier for a return.
+          example: 1
+          format: int64
+          type: integer
+        registrationDateTime:
+          description: The date and time in ISO 8601 format when this return was registered.
+          example: 2016-11-14T11:06:48.423+01:00
+          format: date-time
+          type: string
+        fulfilmentMethod:
+          description: Specifies whether this shipment has been fulfilled by the retailer
+            (FBR) or fulfilled by bol.com (FBB). Defaults to FBR.
+          example: FBR
+          type: string
+        returnItems:
+          items:
+            $ref: '#/components/schemas/ReducedReturnItem'
+          type: array
+      required:
+      - returnItems
+      type: object
+    ReducedReturnItem:
+      properties:
+        rmaId:
+          description: The RMA (Return Merchandise Authorization) id that identifies
+            this particular return.
+          example: 31234567
+          format: int64
+          type: integer
+        orderId:
+          description: The id of the customer order this return item is in.
+          example: "4012345678"
+          type: string
+        ean:
+          description: The EAN number associated with this product.
+          example: "9789076174082"
+          type: string
+        expectedQuantity:
+          description: 'The quantity that is expected to be returned by the customer.
+            Note: this can be greater than 1 in case the customer ordered a quantity
+            greater than 1 of the same product in the same customer order.'
+          example: 1
+          format: int32
+          type: integer
+        returnReason:
+          description: The reason why the customer returned this product.
+          example: Niet naar verwachting
+          type: string
+        returnReasonComments:
+          description: Additional details from the customer as to why this item was
+            returned.
+          example: Lorem Ipsum
+          type: string
+        handled:
+          description: Indicates if this return item has been handled (by the retailer).
+          example: true
+          type: boolean
+        processingResults:
+          items:
+            $ref: '#/components/schemas/ReturnProcessingResult'
+          type: array
+      required:
+      - processingResults
+      type: object
+    RejectedAttributeResponse:
+      description: An rejected attribute.
+      properties:
+        attributeId:
+          description: Identifier of the attribute from the data model.
+          example: Width
+          type: string
+        rejectionErrors:
+          items:
+            $ref: '#/components/schemas/RejectionError'
+          type: array
+      required:
+      - rejectionErrors
+      type: object
+    RejectionError:
+      properties:
+        code:
+          description: The rejection error code.
+          example: 1000
+          format: int32
+          type: integer
+        message:
+          description: The rejection error message explains why the value was rejected.
+          example: Example rejection message.
+          type: string
+      type: object
+    RetailPrice:
+      description: Retail price information with the country in which it applies.
+      properties:
+        price:
+          description: The retail price for this product with two decimals precision.
+            The price includes VAT.
+          example: 10.99
+          type: number
+        country:
+          description: 'The ISO-3166 country code. '
+          example: NL
+          type: string
+      required:
+      - country
+      - price
+      type: object
+    RetailPriceResponse:
+      description: Retail price information for products and the countries in which
+        they apply.
+      properties:
+        retailPrices:
+          items:
+            $ref: '#/components/schemas/RetailPrice'
+          type: array
+      required:
+      - retailPrices
+      type: object
+    Return:
+      properties:
+        returnId:
+          description: Unique identifier for a return.
+          example: 1
+          format: int64
+          type: integer
+        registrationDateTime:
+          description: The date and time in ISO 8601 format when this return was registered.
+          example: 2016-11-14T11:06:48.423+01:00
+          format: date-time
+          type: string
+        fulfilmentMethod:
+          description: Specifies whether this shipment has been fulfilled by the retailer
+            (FBR) or fulfilled by bol.com (FBB). Defaults to FBR.
+          example: FBR
+          type: string
+        returnItems:
+          items:
+            $ref: '#/components/schemas/ReturnItem'
+          type: array
+      required:
+      - returnItems
+      type: object
+    ReturnItem:
+      properties:
+        rmaId:
+          description: The RMA (Return Merchandise Authorization) id that identifies
+            this particular return.
+          example: 31234567
+          format: int64
+          type: integer
+        orderId:
+          description: The id of the customer order this return item is in.
+          example: "4012345678"
+          type: string
+        ean:
+          description: The EAN number associated with this product.
+          example: "9789076174082"
+          type: string
+        title:
+          description: The product title.
+          example: Harry Potter en de steen der wijzen
+          type: string
+        expectedQuantity:
+          description: 'The quantity that is expected to be returned by the customer.
+            Note: this can be greater than 1 in case the customer ordered a quantity
+            greater than 1 of the same product in the same customer order.'
+          example: 1
+          format: int32
+          type: integer
+        returnReason:
+          description: The reason why the customer returned this product.
+          example: Niet naar verwachting
+          type: string
+        returnReasonComments:
+          description: Additional details from the customer as to why this item was
+            returned.
+          example: Lorem Ipsum
+          type: string
+        trackAndTrace:
+          description: The track and trace code that is associated with this transport.
+          example: 3SBOL0987654321
+          type: string
+        transporterName:
+          description: The name of the transporter.
+          example: PostNL
+          type: string
+        handled:
+          description: Indicates if this return item has been handled (by the retailer).
+          example: true
+          type: boolean
+        processingResults:
+          items:
+            $ref: '#/components/schemas/ReturnProcessingResult'
+          type: array
+        customerDetails:
+          $ref: '#/components/schemas/CustomerDetails'
+      required:
+      - processingResults
+      type: object
+    ReturnProcessingResult:
+      properties:
+        quantity:
+          description: The processed quantity.
+          example: 1
+          format: int32
+          type: integer
+        processingResult:
+          description: The processing result of the return.
+          example: ACCEPTED
+          type: string
+        handlingResult:
+          description: The handling result requested by the user.
+          example: RETURN_RECEIVED
+          type: string
+        processingDateTime:
+          description: The date and time in ISO 8601 format when the return was processed.
+          example: 2018-04-17T10:55:37+02:00
+          format: date-time
+          type: string
+      type: object
+    ReturnRequest:
+      properties:
+        handlingResult:
+          enum:
+          - RETURN_RECEIVED
+          - EXCHANGE_PRODUCT
+          - RETURN_DOES_NOT_MEET_CONDITIONS
+          - REPAIR_PRODUCT
+          - CUSTOMER_KEEPS_PRODUCT_PAID
+          - STILL_APPROVED
+          example: RETURN_RECEIVED
+          type: string
+        quantityReturned:
+          example: 1
+          format: int32
+          maximum: 9999
+          minimum: 1
+          type: integer
+      required:
+      - quantityReturned
+      type: object
+    ReturnsResponse:
+      properties:
+        returns:
+          items:
+            $ref: '#/components/schemas/ReducedReturn'
+          type: array
+      required:
+      - returns
+      type: object
+    SalesForecastResponse:
+      properties:
+        name:
+          description: Indicator name.
+          example: SALES_FORECAST
+          type: string
+        type:
+          description: Interpretation of the data that applies to this measurement.
+          example: decimal
+          type: string
+        total:
+          $ref: '#/components/schemas/TotalResponse'
+        countries:
+          items:
+            $ref: '#/components/schemas/CountryTotalResponse'
+          type: array
+        periods:
+          items:
+            $ref: '#/components/schemas/PeriodResponse'
+          type: array
+      required:
+      - countries
+      - periods
+      - total
+      type: object
+    ShipmentRequest:
+      properties:
+        orderItems:
+          description: List of order items to ship. Order item id's must belong to
+            the same order.
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          maxItems: 1
+          minItems: 1
+          type: array
+        shipmentReference:
+          description: Used for administration purposes.
+          example: B321SR
+          maxLength: 90
+          minLength: 0
+          type: string
+        shippingLabelId:
+          description: Specifies shipping label to be used for this shipment. Can
+            be retrieved through the shipping label endpoint.
+          example: d4c50077-0c19-435f-9bee-1b30b9f4ba1a
+          type: string
+        transport:
+          $ref: '#/components/schemas/TransportInstruction'
+      required:
+      - orderItems
+      type: object
+    ShippingLabelRequest:
+      description: The configuration of order items to get delivery options for.
+      properties:
+        orderItems:
+          description: Order items for which the delivery options are requested.
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          type: array
+        shippingLabelOfferId:
+          description: Shipping label offer id for which you request a shipping label.
+          example: 027b79fa-5743-40f0-94c7-0eac761af611
+          type: string
+      required:
+      - orderItems
+      - shippingLabelOfferId
+      type: object
+    SubscriptionResponse:
+      properties:
+        id:
+          description: A unique identifier for the subscription
+          example: 1234
+          format: int64
+          type: integer
+        resources:
+          description: Type of event
+          example: '[''PROCESS_STATUS'']'
+          items:
+            type: string
+          type: array
+        url:
+          description: URL to receive this WebHook notification
+          example: https://www.bol.com/webhook
+          type: string
+      required:
+      - id
+      - resources
+      - url
+      type: object
+    SubscriptionsResponse:
+      properties:
+        subscriptions:
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+          type: array
+      required:
+      - subscriptions
+      type: object
+    TotalResponse:
+      properties:
+        minimum:
+          description: Minimum number of estimated sales expectations on the bol.com
+            platform.
+          example: 10.5
+          format: double
+          type: number
+        maximum:
+          description: Maximum number of estimated sales expectations on the bol.com
+            platform.
+          example: 20.5
+          format: double
+          type: number
+      type: object
+    TransportInstruction:
+      properties:
+        transporterCode:
+          description: Specify the transporter that will carry out the shipment.
+          example: TNT
+          type: string
+        trackAndTrace:
+          description: The track and trace code that is associated with this transport.
+          example: 3SBOL0987654321
+          type: string
+      type: object
+    UpdateSubscriptionRequest:
+      properties:
+        resources:
+          description: Type of event
+          example: '[''PROCESS_STATUS'']'
+          items:
+            enum:
+            - PROCESS_STATUS
+            type: string
+          type: array
+        url:
+          description: URL to receive this WebHook notification
+          example: https://www.bol.com/webhook
+          pattern: ^https.*
+          type: string
+      required:
+      - resources
+      - url
+      type: object
+    ValidationReportResponse:
+      description: Validation report.
+      properties:
+        productContents:
+          items:
+            $ref: '#/components/schemas/ProductContentResponse'
+          type: array
+      type: object
+    Violation:
+      description: Describes a violation that occurred interacting with the API.
+      properties:
+        name:
+          description: Describes the origin of the error, for instance a field or
+            query parameter validation error.
+          example: exampleValue
+          type: string
+        reason:
+          description: Detailed description of the validation error that caused the
+            problem.
+          example: 'Request contains invalid value(s): ''INVALID'', allowed values:
+            ALLOWED_VALUE1, ALLOWED_VALUE2.'
+          type: string
+      type: object
