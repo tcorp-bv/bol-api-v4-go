@@ -1,4 +1,4 @@
-# Bol-api-go
+# Bol-api-v4-go
 Golang API client generated from the [bol.com v4](https://developers.bol.com/beta-program-retailer-api/) api [swagger specification](https://api.bol.com/retailer/public/apispec/v4).
 
 TCorp does not hold copyright over the API specification and [types.json](types.json) is from [bol.com](https://api.bol.com/retailer/public/apispec/v3).
