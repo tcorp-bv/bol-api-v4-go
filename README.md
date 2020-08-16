@@ -1,5 +1,5 @@
 # Bol-api-go
-Generated golang API for [bol.com v4](https://developers.bol.com/beta-program-retailer-api/) using the [swagger spec](https://api.bol.com/retailer/public/apispec/v4).
+Golang API client generated from the [bol.com v4](https://developers.bol.com/beta-program-retailer-api/) api [swagger specification](https://api.bol.com/retailer/public/apispec/v4).
 
 TCorp does not hold copyright over the API specification and [types.json](types.json) is from [bol.com](https://api.bol.com/retailer/public/apispec/v3).
 
@@ -30,19 +30,11 @@ for _, s := range res.Payload.Shipments {
 
 
 ## Regenerating the API
-[Go-swagger](https://github.com/go-swagger/go-swagger) was used for the client generation. Make sure it is accessible as `swagger`.
 ```shell script
-swagger generate client -f types.json
+make generate
 ```
 
-In the current version we had to change `get-process-status` to `get-process-status-list` due to the duplicate.
-
 ## Notes on rate limiting
-Rate limits of the bol.com api are shared between all your clientIds and are extremely low.
-Because of this, we recommend having a single service that consumes your bol.com api and indexes all resources.
+Bol.com shares your rate limits over all of your OAuth2.0 keys. The limits are extremely low. You should have a single service that consumes and caches the API for your other services.
 
-This library is opinionated in the way it handles rate limiting.
-Requests that fail due to rate limiting will be tried again a certain amount of time.
-Because of this, requests could take a very long time. 
-
-The default behavior is to retry 10 times.
+This library has retry-logic build in. When a request fails due to rate-limiting , the api sends the request again. A request could thus take multiple minutes to complete. The default behavior is to retry 10 times.
