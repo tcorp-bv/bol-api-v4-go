@@ -5,7 +5,8 @@
 	"settings": { 
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"go.gopath": "~/go",
-		"go.inferGopath": true
+		"go.inferGopath": true,
+		"go.buildTags": "integration"
 	},
 	"extensions": [
 		"golang.go"
