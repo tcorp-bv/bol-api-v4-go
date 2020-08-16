@@ -1,7 +1,7 @@
 # Bol-api-go
 Generated golang API for [bol.com v4](https://developers.bol.com/beta-program-retailer-api/) using the [swagger spec](https://api.bol.com/retailer/public/apispec/v4).
 
-We do not hold copyright over the API specification and [types.json](types.json) is from [bol.com](https://api.bol.com/retailer/public/apispec/v3).
+TCorp does not hold copyright over the API specification and [types.json](types.json) is from [bol.com](https://api.bol.com/retailer/public/apispec/v3).
 
 ## Using the API
 Add `github.com/tcorp-bv/bol-api-v4-go v1.0.0` to go.mod.
