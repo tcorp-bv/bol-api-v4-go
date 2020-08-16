@@ -15,6 +15,7 @@ api, err := bolapi.New(&auth.EnvironmentProvider{ClientIdKey: "CLIENT_ID", Clien
 if err != nil {
 	//handle error
 }
+
 // Get the client (you should do this once)
 client := api.GetClient()
 	
@@ -23,6 +24,7 @@ res, err := client.Shipments.GetShipments(&shipments.GetShipmentsParams{Context:
 if err != nil {
 	// handle error
 }
+
 for _, s := range res.Payload.Shipments {
 	println(s.ShipmentID)
 }
