@@ -10,6 +10,7 @@ Add `github.com/tcorp-bv/bol-api-v4-go v1.0.0` to go.mod.
 import (
     bolapi "github.com/tcorp-bv/bol-api-v4-go"
 )
+
 // Setup the authentication
 api, err := bolapi.New(&auth.EnvironmentProvider{ClientIdKey: "CLIENT_ID", ClientSecretKey: "CLIENT_SECRET"})
 if err != nil {
