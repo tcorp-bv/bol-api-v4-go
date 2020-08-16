@@ -95,3 +95,8 @@ func newBolAPI(provider auth.CredentialProvider, host string, basepath string, t
 
 	return &bolAPI{HTTPClient: client}, nil
 }
+
+// New creates a new API client with the default host (default is "api.bol.com") and the provided CredentialProvider.
+func New(provider auth.CredentialProvider) (BolAPI, error) {
+	return NewWithHost(provider, defaultHost, "")
+}
